@@ -1,0 +1,149 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.ehanlin</groupId>
+	<artifactId>hmongodb</artifactId>
+	<version>0.6.2-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>hmongodb</name>
+	<url>http://git.tbbt.com.tw/hmongodb</url>
+
+	<repositories>
+		<repository>
+			<id>ehanlin repo</id>
+			<url>http://10.13.103.115/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+	
+	<properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <springframework.version>4.0.1.RELEASE</springframework.version>
+    </properties>
+
+	<dependencies>
+		<dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>2.12.0</version>
+            <scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.ehanlin</groupId>
+			<artifactId>hconvert</artifactId>
+			<version>0.4-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.3.3</version>
+            <scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${springframework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${springframework.version}</version>
+            <scope>provided</scope>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${project.name}</finalName>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>2.4</version>
+			</extension>
+		</extensions>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<includes>
+						<inclued>com/ehanlin/hmongodb/**/*.java</inclued>
+					</includes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<show>private</show>
+					<nohelp>true</nohelp>
+				</configuration>
+			</plugin>
+
+			<!-- 需要在上傳的機器上的 maven setting 中設定 serverId -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>wagon-maven-plugin</artifactId>
+				<version>1.0-beta-4</version>
+				<configuration>
+					<serverId>docServer</serverId>
+					<fromDir>${basedir}/target/site/apidocs</fromDir>
+					<includes>${wagon.includes}</includes>
+					<optimize>true</optimize>
+					<excludes>pom.xml</excludes>
+					<followSymLink>true</followSymLink>
+					<useDefaultExcludes>false</useDefaultExcludes>
+					<url>scp://10.13.103.119</url>
+					<toDir>/var/www/html/${project.name}</toDir>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- 需要在上傳的機器上的 maven setting 中設定 serverId -->
+	<distributionManagement>
+		<repository>
+			<id>mavenServer</id>
+			<url>scp://10.13.103.115:/var/www/html</url>
+		</repository>
+	</distributionManagement>
+
+</project>
