@@ -4,16 +4,16 @@
 
 	<groupId>com.ehanlin</groupId>
 	<artifactId>hmongodb</artifactId>
-	<version>0.6.2-SNAPSHOT</version>
+	<version>0.6.2</version>
 	<packaging>jar</packaging>
 
 	<name>hmongodb</name>
-	<url>http://git.tbbt.com.tw/hmongodb</url>
+	<url>https://github.com/eHanlin/hMongoDB</url>
 
 	<repositories>
 		<repository>
 			<id>ehanlin repo</id>
-			<url>http://10.13.103.115/</url>
+			<url>http://dl.bintray.com/ehanlin/maven</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -42,12 +42,24 @@
 		<dependency>
 			<groupId>com.ehanlin</groupId>
 			<artifactId>hconvert</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>0.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.flapdoodle.embed</groupId>
+			<artifactId>de.flapdoodle.embed.mongo</artifactId>
+			<version>1.50.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.jcip</groupId>
+			<artifactId>jcip-annotations</artifactId>
+			<version>1.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -101,8 +113,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.0</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<includes>
 						<inclued>com/ehanlin/hmongodb/**/*.java</inclued>
 					</includes>
@@ -117,32 +129,13 @@
 					<nohelp>true</nohelp>
 				</configuration>
 			</plugin>
-
-			<!-- 需要在上傳的機器上的 maven setting 中設定 serverId -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>wagon-maven-plugin</artifactId>
-				<version>1.0-beta-4</version>
-				<configuration>
-					<serverId>docServer</serverId>
-					<fromDir>${basedir}/target/site/apidocs</fromDir>
-					<includes>${wagon.includes}</includes>
-					<optimize>true</optimize>
-					<excludes>pom.xml</excludes>
-					<followSymLink>true</followSymLink>
-					<useDefaultExcludes>false</useDefaultExcludes>
-					<url>scp://10.13.103.119</url>
-					<toDir>/var/www/html/${project.name}</toDir>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 
-	<!-- 需要在上傳的機器上的 maven setting 中設定 serverId -->
 	<distributionManagement>
 		<repository>
-			<id>mavenServer</id>
-			<url>scp://10.13.103.115:/var/www/html</url>
+			<id>bintray</id>
+			<url>https://api.bintray.com/maven/hotdog929/maven/hMongoDB/;publish=1</url>
 		</repository>
 	</distributionManagement>
 

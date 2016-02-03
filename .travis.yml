@@ -1,0 +1,13 @@
+language: java
+jdk:
+  - oraclejdk8
+deploy:
+  skip_cleanup: true
+  api_key: "${GITHUB_KEY}"
+  provider: releases
+  file: "target/*.jar"
+  file_glob: true
+  on:
+    tags: true
+after_deploy:
+  - "mvn --settings .travis_mvn_settings.xml deploy"
