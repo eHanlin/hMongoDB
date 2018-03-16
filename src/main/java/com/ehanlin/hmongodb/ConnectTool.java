@@ -38,10 +38,10 @@ public class ConnectTool {
         if(mongodbCredentialResource.exists()){
             Properties mongodbCredentialProperties = new Properties();
             try {
-                mongodbCredentialProperties.load(new ClassPathResource("environment.properties").getInputStream());
-                ConnectTool.dbUser = mongodbCredentialProperties.getProperty("mongodb.user");
-                ConnectTool.dbPw = mongodbCredentialProperties.getProperty("mongodb.pw");
-                ConnectTool.dbSource = mongodbCredentialProperties.getProperty("mongodb.source");
+                mongodbCredentialProperties.load(mongodbCredentialResource.getInputStream());
+                ConnectTool.dbUser = mongodbCredentialProperties.getProperty("user");
+                ConnectTool.dbPw = mongodbCredentialProperties.getProperty("pw");
+                ConnectTool.dbSource = mongodbCredentialProperties.getProperty("source");
             } catch (Throwable ex) {
 
             }
