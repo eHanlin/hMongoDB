@@ -17,12 +17,12 @@ import org.springframework.core.io.ClassPathResource;
  * @author hotdog929
  */
 public class ConnectTool {
-    public static ConnectTool instance = new ConnectTool();
-
     private static String dbUser = null;
     private static String dbPw = null;
     private static String dbSource = null;
-    
+
+    public static ConnectTool instance = new ConnectTool();
+
     private Integer defaultPort = 27017;
     
     private Lock clientLock = new ReentrantLock();
@@ -34,14 +34,19 @@ public class ConnectTool {
     private Map<String, DBCollection> collectionMap = new ConcurrentHashMap<String, DBCollection>();
 
     private ConnectTool(){
+        System.out.println("check mongodb-credential.properties");
         ClassPathResource mongodbCredentialResource = new ClassPathResource("mongodb-credential.properties");
         if(mongodbCredentialResource.exists()){
+            System.out.println("mongodb-credential.properties existed");
             Properties mongodbCredentialProperties = new Properties();
             try {
                 mongodbCredentialProperties.load(mongodbCredentialResource.getInputStream());
                 ConnectTool.dbUser = mongodbCredentialProperties.getProperty("user");
+                System.out.println("mongodb-credential.properties user is " + ConnectTool.dbUser);
                 ConnectTool.dbPw = mongodbCredentialProperties.getProperty("pw");
+                System.out.println("mongodb-credential.properties pw is " + ConnectTool.dbPw);
                 ConnectTool.dbSource = mongodbCredentialProperties.getProperty("source");
+                System.out.println("mongodb-credential.properties source is " + ConnectTool.dbSource);
             } catch (Throwable ex) {
 
             }
@@ -59,11 +64,11 @@ public class ConnectTool {
                     if(ConnectTool.dbUser != null && ConnectTool.dbPw != null){
                         MongoCredential credential = null;
                         if(dbName == null && ConnectTool.dbSource != null){
-                            credential = MongoCredential.createMongoCRCredential(ConnectTool.dbUser, ConnectTool.dbSource, ConnectTool.dbPw.toCharArray());
+                            credential = MongoCredential.createCredential(ConnectTool.dbUser, ConnectTool.dbSource, ConnectTool.dbPw.toCharArray());
                         }else if(dbName != null){
-                            credential = MongoCredential.createMongoCRCredential(ConnectTool.dbUser, dbName, ConnectTool.dbPw.toCharArray());
+                            credential = MongoCredential.createCredential(ConnectTool.dbUser, dbName, ConnectTool.dbPw.toCharArray());
                         }else{
-                            credential = MongoCredential.createMongoCRCredential(ConnectTool.dbUser, "admin", ConnectTool.dbPw.toCharArray());
+                            credential = MongoCredential.createCredential(ConnectTool.dbUser, "admin", ConnectTool.dbPw.toCharArray());
                         }
                         clientMap.put(key, new MongoClient(new ServerAddress(host, port), Arrays.asList(credential)));
                     }else{
