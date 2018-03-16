@@ -1,13 +1,15 @@
 package com.ehanlin.hmongodb;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
+import com.mongodb.*;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * 用來統一取得 MongoDB 連線的工具類別
@@ -16,6 +18,10 @@ import com.mongodb.MongoClient;
  */
 public class ConnectTool {
     public static ConnectTool instance = new ConnectTool();
+
+    private static String dbUser = null;
+    private static String dbPw = null;
+    private static String dbSource = null;
     
     private Integer defaultPort = 27017;
     
@@ -26,8 +32,23 @@ public class ConnectTool {
     private Map<String, MongoClient> clientMap = new ConcurrentHashMap<String, MongoClient>();
     private Map<String, DB> dbMap = new ConcurrentHashMap<String, DB>();
     private Map<String, DBCollection> collectionMap = new ConcurrentHashMap<String, DBCollection>();
+
+    private ConnectTool(){
+        ClassPathResource mongodbCredentialResource = new ClassPathResource("mongodb-credential.properties");
+        if(mongodbCredentialResource.exists()){
+            Properties mongodbCredentialProperties = new Properties();
+            try {
+                mongodbCredentialProperties.load(new ClassPathResource("environment.properties").getInputStream());
+                ConnectTool.dbUser = mongodbCredentialProperties.getProperty("mongodb.user");
+                ConnectTool.dbPw = mongodbCredentialProperties.getProperty("mongodb.pw");
+                ConnectTool.dbSource = mongodbCredentialProperties.getProperty("mongodb.source");
+            } catch (Throwable ex) {
+
+            }
+        }
+    }
     
-    public MongoClient getClient(String host, Integer port){
+    public MongoClient getClient(String host, Integer port, String dbName){
         String key = host+":"+port;
         if(clientMap.containsKey(key)){
             return clientMap.get(key);
@@ -35,7 +56,19 @@ public class ConnectTool {
             clientLock.lock();
             try{
                 if(!clientMap.containsKey(key)){
-                    clientMap.put(key, new MongoClient(host, port));
+                    if(ConnectTool.dbUser != null && ConnectTool.dbPw != null){
+                        MongoCredential credential = null;
+                        if(dbName == null && ConnectTool.dbSource != null){
+                            credential = MongoCredential.createMongoCRCredential(ConnectTool.dbUser, ConnectTool.dbSource, ConnectTool.dbPw.toCharArray());
+                        }else if(dbName != null){
+                            credential = MongoCredential.createMongoCRCredential(ConnectTool.dbUser, dbName, ConnectTool.dbPw.toCharArray());
+                        }else{
+                            credential = MongoCredential.createMongoCRCredential(ConnectTool.dbUser, "admin", ConnectTool.dbPw.toCharArray());
+                        }
+                        clientMap.put(key, new MongoClient(new ServerAddress(host, port), Arrays.asList(credential)));
+                    }else{
+                        clientMap.put(key, new MongoClient(host, port));
+                    }
                 }    
                 return clientMap.get(key);
             }catch(Exception e){
@@ -44,6 +77,10 @@ public class ConnectTool {
                 clientLock.unlock();
             }
         }
+    }
+
+    public MongoClient getClient(String host, Integer port){
+        return getClient(host, port, null);
     }
     
     public MongoClient getClient(String host){
@@ -58,7 +95,7 @@ public class ConnectTool {
             dbLock.lock();
             try{
                 if(!dbMap.containsKey(key)){
-                    dbMap.put(key, getClient(host, port).getDB(dbName));
+                    dbMap.put(key, getClient(host, port, dbName).getDB(dbName));
                 }
                 return dbMap.get(key);
             }catch(Exception e){
