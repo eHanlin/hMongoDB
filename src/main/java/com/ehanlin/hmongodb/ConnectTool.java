@@ -17,6 +17,7 @@ import org.springframework.core.io.ClassPathResource;
  * @author hotdog929
  */
 public class ConnectTool {
+    private static String dbURI = null;
     private static String dbUser = null;
     private static String dbPw = null;
     private static String dbAuthenticationDatabase = null;
@@ -41,6 +42,8 @@ public class ConnectTool {
             Properties mongodbCredentialProperties = new Properties();
             try {
                 mongodbCredentialProperties.load(mongodbCredentialResource.getInputStream());
+                ConnectTool.dbURI = mongodbCredentialProperties.getProperty("uri");
+                System.out.println("mongodb-credential.properties uri is " + ConnectTool.dbURI);
                 ConnectTool.dbUser = mongodbCredentialProperties.getProperty("user");
                 System.out.println("mongodb-credential.properties user is " + ConnectTool.dbUser);
                 ConnectTool.dbPw = mongodbCredentialProperties.getProperty("pw");
@@ -61,7 +64,9 @@ public class ConnectTool {
             clientLock.lock();
             try{
                 if(!clientMap.containsKey(key)){
-                    if(ConnectTool.dbUser != null && ConnectTool.dbPw != null){
+                    if(ConnectTool.dbURI != null){
+                        clientMap.put(key, new MongoClient(new MongoClientURI(ConnectTool.dbURI)));
+                    }else if(ConnectTool.dbUser != null && ConnectTool.dbPw != null){
                         MongoCredential credential = null;
                         if(authenticationDatabase != null){
                             credential = MongoCredential.createCredential(ConnectTool.dbUser, authenticationDatabase, ConnectTool.dbPw.toCharArray());
