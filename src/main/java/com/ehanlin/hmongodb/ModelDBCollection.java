@@ -416,38 +416,6 @@ public class ModelDBCollection<T> {
         dbCollection.createIndex(keys, options);
     }
     
-    public void createIndex( DBObject keys , DBObject options, DBEncoder encoder ){
-        dbCollection.createIndex(keys, options, encoder);
-    }
-    
-    public void ensureIndex( final String name ){
-        dbCollection.ensureIndex(name);
-    }
-    
-    public void ensureIndex( final DBObject keys ){
-        dbCollection.ensureIndex(keys);
-    }
-    
-    public void ensureIndex( DBObject keys , String name ){
-        dbCollection.ensureIndex(keys, name);
-    }
-    
-    public void ensureIndex( DBObject keys , String name , boolean unique ){
-        dbCollection.ensureIndex(keys, name, unique);
-    }
-    
-    public void ensureIndex( final DBObject keys , final DBObject optionsIN ){
-        dbCollection.ensureIndex(keys, optionsIN);
-    }
-    
-    public void resetIndexCache(){
-        dbCollection.resetIndexCache();
-    }
-    
-    public static String genIndexName( DBObject keys ){
-        return DBCollection.genIndexName(keys);
-    }
-    
     public void setHintFields( List<DBObject> lst ){
         dbCollection.setHintFields(lst);
     }
@@ -492,14 +460,6 @@ public class ModelDBCollection<T> {
     @SuppressWarnings("unchecked")
     public T findOne( DBObject o, DBObject fields, DBObject orderBy, ReadPreference readPref ){
         return (T) getConverter().revert(dbCollection.findOne(o, fields, orderBy, readPref), modelClass);
-    }
-    
-    public Object apply( DBObject o ){
-        return dbCollection.apply(o);
-    }
-    
-    public Object apply( DBObject jo , boolean ensureID ){
-        return dbCollection.apply(jo, ensureID);
     }
     
     public WriteResult save( DBObject jo ){
@@ -624,10 +584,6 @@ public class ModelDBCollection<T> {
     
     public MapReduceOutput mapReduce( MapReduceCommand command ){
         return dbCollection.mapReduce(command); 
-    }
-    
-    public MapReduceOutput mapReduce( DBObject command ){
-        return dbCollection.mapReduce(command);
     }
     
     public AggregationOutput aggregate( DBObject firstOp, DBObject ... additionalOps){

@@ -310,38 +310,6 @@ public class AdvancedDBCollection {
         dbCollection.createIndex(keys, options);
     }
     
-    public void createIndex( DBObject keys , DBObject options, DBEncoder encoder ){
-        dbCollection.createIndex(keys, options, encoder);
-    }
-    
-    public void ensureIndex( final String name ){
-        dbCollection.ensureIndex(name);
-    }
-    
-    public void ensureIndex( final DBObject keys ){
-        dbCollection.ensureIndex(keys);
-    }
-    
-    public void ensureIndex( DBObject keys , String name ){
-        dbCollection.ensureIndex(keys, name);
-    }
-    
-    public void ensureIndex( DBObject keys , String name , boolean unique ){
-        dbCollection.ensureIndex(keys, name, unique);
-    }
-    
-    public void ensureIndex( final DBObject keys , final DBObject optionsIN ){
-        dbCollection.ensureIndex(keys, optionsIN);
-    }
-    
-    public void resetIndexCache(){
-        dbCollection.resetIndexCache();
-    }
-    
-    public static String genIndexName( DBObject keys ){
-        return DBCollection.genIndexName(keys);
-    }
-    
     public void setHintFields( List<DBObject> lst ){
         dbCollection.setHintFields(lst);
     }
@@ -359,11 +327,11 @@ public class AdvancedDBCollection {
 
           if ( index < ( queries.length - 1) ) {
             list.add( tmpCollName );
-            List<DBObject> result = coll.find(query, null).toArray();
+            List<DBObject> result = coll.find(query).toArray();
             coll = db.getCollection( tmpCollName );
             coll.insert( result );
           } else {
-            cursorResult = coll.find(query, null);
+            cursorResult = coll.find(query);
           }
           index++;
         }
@@ -418,14 +386,6 @@ public class AdvancedDBCollection {
     
     public DBObject findOne( DBObject o, DBObject fields, DBObject orderBy, ReadPreference readPref ){
         return dbCollection.findOne(o, fields, orderBy, readPref);
-    }
-    
-    public Object apply( DBObject o ){
-        return dbCollection.apply(o);
-    }
-    
-    public Object apply( DBObject jo , boolean ensureID ){
-        return dbCollection.apply(jo, ensureID);
     }
     
     public WriteResult save( DBObject jo ){
@@ -550,11 +510,6 @@ public class AdvancedDBCollection {
     
     public MapReduceOutput mapReduce( MapReduceCommand command ){
         return dbCollection.mapReduce(command); 
-    }
-
-    @Deprecated
-    public MapReduceOutput mapReduce( DBObject command ){
-        return dbCollection.mapReduce(command);
     }
 
     @Deprecated

@@ -460,13 +460,13 @@ public class MongoDefaultModel<S> extends MongoModelBase<S, Object>{
                 }
                 if(source instanceof ParameterizedType){
                     Type[] mapTypes = GenericTool.getGenericTypes(source);
-                    map.put(getConverter().revert("time", mapTypes[0], String.class), getConverter().revert(value.getTime(), mapTypes[1], Long.TYPE));
-                    map.put(getConverter().revert("machine", mapTypes[0], String.class), getConverter().revert(value.getMachine(), mapTypes[1], Integer.TYPE));
-                    map.put(getConverter().revert("inc", mapTypes[0], String.class), getConverter().revert(value.getInc(), mapTypes[1], Integer.TYPE));
+                    map.put(getConverter().revert("time", mapTypes[0], String.class), getConverter().revert(value.getTimestamp(), mapTypes[1], Long.TYPE));
+                    map.put(getConverter().revert("machine", mapTypes[0], String.class), getConverter().revert(value.getMachineIdentifier(), mapTypes[1], Integer.TYPE));
+                    map.put(getConverter().revert("inc", mapTypes[0], String.class), getConverter().revert(value.getProcessIdentifier(), mapTypes[1], Integer.TYPE));
                 }else{
-                    map.put(getConverter().revert("time", Object.class, String.class), getConverter().revert(value.getTime(), Object.class, Long.TYPE));
-                    map.put(getConverter().revert("machine", Object.class, String.class), getConverter().revert(value.getMachine(), Object.class, Integer.TYPE));
-                    map.put(getConverter().revert("inc", Object.class, String.class), getConverter().revert(value.getInc(), Object.class, Integer.TYPE));
+                    map.put(getConverter().revert("time", Object.class, String.class), getConverter().revert(value.getTimestamp(), Object.class, Long.TYPE));
+                    map.put(getConverter().revert("machine", Object.class, String.class), getConverter().revert(value.getMachineIdentifier(), Object.class, Integer.TYPE));
+                    map.put(getConverter().revert("inc", Object.class, String.class), getConverter().revert(value.getProcessIdentifier(), Object.class, Integer.TYPE));
                 }
                 return (S) map;
             case COLLECTION:
@@ -521,13 +521,13 @@ public class MongoDefaultModel<S> extends MongoModelBase<S, Object>{
                 
                 if(source instanceof ParameterizedType){
                     Type[] mapTypes = GenericTool.getGenericTypes(source);
-                    map.put(getConverter().revert("$ref", mapTypes[0], String.class), getConverter().revert(value.getRef(), mapTypes[1], String.class));
+                    map.put(getConverter().revert("$ref", mapTypes[0], String.class), getConverter().revert(value.getCollectionName(), mapTypes[1], String.class));
                     map.put(getConverter().revert("$id", mapTypes[0], String.class), getConverter().revert(value.getId(), mapTypes[1]));
-                    map.put(getConverter().revert("$db", mapTypes[0], String.class), getConverter().revert(value.getDB().getName(), mapTypes[1], String.class));
+                    map.put(getConverter().revert("$db", mapTypes[0], String.class), getConverter().revert(value.getDatabaseName(), mapTypes[1], String.class));
                 }else{
-                    map.put(getConverter().revert("$ref", Object.class, String.class), getConverter().revert(value.getRef(), Object.class, String.class));
+                    map.put(getConverter().revert("$ref", Object.class, String.class), getConverter().revert(value.getCollectionName(), Object.class, String.class));
                     map.put(getConverter().revert("$id", Object.class, String.class), getConverter().revert(value.getId(), Object.class));
-                    map.put(getConverter().revert("$db", Object.class, String.class), getConverter().revert(value.getDB().getName(), Object.class, String.class));
+                    map.put(getConverter().revert("$db", Object.class, String.class), getConverter().revert(value.getDatabaseName(), Object.class, String.class));
                 }
                 return (S) map;
             case COLLECTION:

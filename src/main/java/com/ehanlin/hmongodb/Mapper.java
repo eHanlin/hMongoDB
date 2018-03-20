@@ -115,8 +115,8 @@ public class Mapper {
                     return modelClass.getDeclaredConstructor(String.class).newInstance(dbRef.getId().toString());
                 }else if(Map.class.isAssignableFrom(modelClass)){
                     Map map = (Map) modelClass.getDeclaredConstructor().newInstance();
-                    map.put("db", dbRef.getDB());
-                    map.put("ref", dbRef.getRef());
+                    map.put("db", dbRef.getDatabaseName());
+                    map.put("ref", dbRef.getCollectionName());
                     map.put("id", dbRef.getId());
                     return (T) map;
                 }else if(DBRef.class.isAssignableFrom(modelClass)){

@@ -4,7 +4,7 @@
 
 	<groupId>com.ehanlin</groupId>
 	<artifactId>hmongodb</artifactId>
-	<version>0.7.6</version>
+	<version>3.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>hmongodb</name>
@@ -36,7 +36,7 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>2.13.2</version>
+			<version>3.6.3</version>
             <scope>provided</scope>
 		</dependency>
 		<dependency>

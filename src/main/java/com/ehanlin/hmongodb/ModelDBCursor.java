@@ -113,14 +113,6 @@ public class ModelDBCursor<T> implements Iterator<T> , Iterable<T>, Closeable{
         return dbCursor.getOptions();
     }
     
-    public int numGetMores(){
-        return dbCursor.numGetMores();
-    }
-    
-    public List<Integer> getSizes(){
-        return dbCursor.getSizes();
-    }
-    
     public int numSeen(){
         return dbCursor.numSeen();
     }
