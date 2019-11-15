@@ -2,11 +2,14 @@ package com.ehanlin.hmongodb;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.mongodb.*;
 import org.springframework.core.io.ClassPathResource;
@@ -42,6 +45,7 @@ public class ConnectTool {
             Properties mongodbCredentialProperties = new Properties();
             try {
                 mongodbCredentialProperties.load(mongodbCredentialResource.getInputStream());
+                mongodbCredentialProperties = propertiesReplaceByEnv(mongodbCredentialProperties);
                 ConnectTool.dbURI = mongodbCredentialProperties.getProperty("uri");
                 System.out.println("mongodb-credential.properties uri is " + ConnectTool.dbURI);
                 ConnectTool.dbUser = mongodbCredentialProperties.getProperty("user");
@@ -54,6 +58,28 @@ public class ConnectTool {
 
             }
         }
+    }
+
+    private Pattern pattern = Pattern.compile("\\$\\{(.+?)\\}");
+    private String replaceByEnv(String value){
+        String result = value;
+        Matcher matcher = pattern.matcher(result);
+        while(matcher.find()){
+            result = matcher.replaceFirst(System.getenv(matcher.group(1)));
+            matcher = pattern.matcher(result);
+        }
+        return result;
+    }
+
+    private Properties propertiesReplaceByEnv(Properties properties){
+        Properties replaced = new Properties();
+        Enumeration propertyNames = properties.propertyNames();
+        while (propertyNames.hasMoreElements()){
+            String key = propertyNames.nextElement().toString();
+            String value = properties.getProperty(key);
+            replaced.put(key, replaceByEnv(value));
+        }
+        return replaced;
     }
     
     public MongoClient getClient(String host, Integer port, String authenticationDatabase){
