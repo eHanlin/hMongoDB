@@ -1,6 +1,6 @@
 language: java
 jdk:
-  - oraclejdk8
+  - openjdk8
 deploy:
   skip_cleanup: true
   api_key: "${GITHUB_KEY}"
