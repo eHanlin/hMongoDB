@@ -1,6 +1,5 @@
 package com.ehanlin.hmongodb;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
@@ -12,7 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.mongodb.*;
+import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 
 /**
  * 用來統一取得 MongoDB 連線的工具類別
@@ -39,9 +40,22 @@ public class ConnectTool {
 
     private ConnectTool(){
         System.out.println("check mongodb-credential.properties");
-        ClassPathResource mongodbCredentialResource = new ClassPathResource("mongodb-credential.properties");
+        String hmongoCredential = System.getenv("HMONGO_CREDENTIAL");
+        System.out.println("HMONGO_CREDENTIAL = "+hmongoCredential);
+        if(hmongoCredential == null || hmongoCredential.trim().isEmpty()){
+            hmongoCredential = "classpath:mongodb-credential.properties";
+        }
+        hmongoCredential = hmongoCredential.trim();
+
+        AbstractResource mongodbCredentialResource = null;
+        if(hmongoCredential.matches("^classpath:.*")){
+            hmongoCredential = hmongoCredential.replaceFirst("classpath:", "");
+            mongodbCredentialResource = new ClassPathResource(hmongoCredential);
+        }else{
+            mongodbCredentialResource = new FileSystemResource(hmongoCredential);
+        }
         if(mongodbCredentialResource.exists()){
-            System.out.println("mongodb-credential.properties existed");
+            System.out.println("mongodb-credential.properties existed. "+hmongoCredential);
             Properties mongodbCredentialProperties = new Properties();
             try {
                 mongodbCredentialProperties.load(mongodbCredentialResource.getInputStream());
