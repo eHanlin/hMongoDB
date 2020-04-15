@@ -2,6 +2,8 @@ package com.ehanlin.hmongodb.util;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ehanlin.hmongodb.ConnectTool;
@@ -41,14 +43,19 @@ public class Rest2DBTool {
         String[] paths = request.getServletPath().split("/");
         return ((paths.length % 2) == 0) ? paths[paths.length-1] : paths[paths.length-2];
     }
-    
-    
+
+    public static Pattern objectIdRegex = Pattern.compile("^[0-9a-f]{24}$");
     public static Object convertPathValue(String pathValue){
         
         try{
-            pathValue = java.net.URLDecoder.decode(pathValue, "UTF-8");    
+            pathValue = java.net.URLDecoder.decode(pathValue, "UTF-8").trim();
         }catch(Exception e){
             
+        }
+
+        Matcher matcher  = objectIdRegex.matcher(pathValue);
+        if(matcher.matches()){
+            return pathValue;
         }
         
         try{
